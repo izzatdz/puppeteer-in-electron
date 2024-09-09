@@ -2,13 +2,8 @@ import getPort from "get-port";
 import http from "http";
 import retry from "async-retry";
 import {v4} from "uuid";
-
-type App = import("electron").App;
-type BrowserWindow = import("electron").BrowserWindow;
-type BrowserView = import("electron").BrowserView;
-type puppeteer = typeof import("puppeteer-core");
-type Browser = import("puppeteer-core").Browser;
-type Page = import("puppeteer-core").Page;
+import { App, BrowserWindow, BrowserView } from 'electron'
+import { PuppeteerNode, Browser, Page } from 'puppeteer-core'
 
 const readJson = async (port: string): Promise<any> => new Promise((resolve, reject) => {
   let json = "";
@@ -36,7 +31,7 @@ const readJson = async (port: string): Promise<any> => new Promise((resolve, rej
  * @param {App} app The app imported from electron.
  * @param {number} port Port to host the DevTools websocket connection.
  */
-export const initialize = async (app: App, port = 0): Promise<void> => {
+export const initialize = async (app: App, port: number): Promise<void> => {
   if (!app) {
     throw new Error("The parameter 'app' was not passed in. " +
       "This may indicate that you are running in node rather than electron.");
@@ -80,10 +75,10 @@ export const initialize = async (app: App, port = 0): Promise<void> => {
  * Connects puppeteer to the electron app. Must call {@link initialize} before connecting.
  * When connecting multiple times, you use the same port.
  * @param {App} app The app imported from electron.
- * @param {puppeteer} puppeteer The imported puppeteer namespace.
+ * @param {PuppeteerNode} puppeteer The imported puppeteer namespace.
  * @returns {Promise<Browser>} An object containing the puppeteer browser, the port, and json received from DevTools.
  */
-export const connect = async (app: App, puppeteer: puppeteer): Promise<Browser> => {
+export const connect = async (app: App, puppeteer: PuppeteerNode): Promise<Browser> => {
   if (!puppeteer) {
     throw new Error("The parameter 'puppeteer' was not passed in.");
   }
@@ -116,7 +111,7 @@ export const connect = async (app: App, puppeteer: puppeteer): Promise<Browser> 
 export const getPage = async (
   browser: Browser,
   window: BrowserWindow | BrowserView,
-  allowBlankNavigate = true
+  allowBlankNavigate: boolean = true
 ): Promise<Page> => {
   if (!browser) {
     throw new Error("The parameter 'browser' was not passed in.");
